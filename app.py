@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file, jsonify
+from flask import Flask, request, send_file, jsonify, render_template
 from flask_cors import CORS
 import cv2
 import numpy as np
@@ -12,7 +12,7 @@ os.environ["TEMP"] = "D:\\temp"
 if not os.path.exists("D:\\temp"):
     os.makedirs("D:\\temp")
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates", static_folder="static")
 CORS(app)  # Enable CORS for all routes
 
 PROCESSED_FOLDER = "D:\\temp"
@@ -27,6 +27,10 @@ def resize_image(image, max_dim=1000):
         new_size = (int(w * scale), int(h * scale))
         image = cv2.resize(image, new_size, interpolation=cv2.INTER_AREA)
     return image
+
+@app.route("/")
+def home():
+    return render_template("index.html")  # Loads the UI
 
 @app.route("/remove_bg", methods=["POST"])
 def remove_bg():
